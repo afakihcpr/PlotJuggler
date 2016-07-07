@@ -9,6 +9,7 @@
 #include <deque>
 #include <QMessageBox>
 #include <QTime>
+#include <QTimer>
 #include <QtCharts/QChartView>
 #include <QtCharts/QLineSeries>
 #include "plotdata.h"
@@ -24,8 +25,6 @@ public:
     bool addCurve(const QString&  name, bool do_replot = true);
 
     bool isEmpty();
-
-//    const std::map<QString, std::shared_ptr<QLineSeries> > &curveList();
 
     QDomElement xmlSaveState(QDomDocument &doc);
 
@@ -85,9 +84,7 @@ private slots:
     void on_changeColor_triggered();
     void on_showPoints_triggered(bool checked);
     void on_externallyResized(QRectF new_rect);
-
-    void on_sceneUpdated();
-
+    void replotImpl() ;
 private:
 
 
@@ -117,6 +114,8 @@ private:
 
     int   _fps_counter;
     QTime _fps_timeStamp;
+
+    QTimer _replot_timer;
 
 
 };

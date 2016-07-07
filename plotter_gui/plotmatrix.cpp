@@ -227,8 +227,8 @@ void PlotMatrix::setAxisScale( int axis, int row, int col,
     PlotWidget *plt = plotAt( row, col );
     if ( plt )
     {
-  //      plt->setAxisScale( axis, min, max, step );
-  //      plt->updateAxes();
+        //      plt->setAxisScale( axis, min, max, step );
+        //      plt->updateAxes();
     }
 }
 
@@ -299,7 +299,7 @@ bool PlotMatrix::xmlLoadState( QDomElement &plotmatrix )
 
 void PlotMatrix::updateLayout()
 {
-/*    for ( int row = 0; row < rowsCount(); row++ )
+    /*    for ( int row = 0; row < rowsCount(); row++ )
     {
         alignAxes( row, QwtPlot::xBottom );
         alignScaleBorder( row, QwtPlot::yLeft );
@@ -406,7 +406,7 @@ void PlotMatrix::on_singlePlotScaleChanged(PlotWidget *modified_plot, QRectF new
 
 void PlotMatrix::alignAxes( int rowOrColumn, int axis )
 {
-/*    if ( axis == QwtPlot::yLeft || axis == QwtPlot::yRight )
+    /*    if ( axis == QwtPlot::yLeft || axis == QwtPlot::yRight )
     {
         double maxExtent = 0;
 

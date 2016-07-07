@@ -68,7 +68,11 @@ PlotWidget::PlotWidget(PlotDataMap *datamap, QWidget *parent):
     // TODO   this->chart()->setMouseTracking(true);
     // TODO   this->chart()->installEventFilter(this);
 
-    connect( chart()->scene(), SIGNAL(changed(QList<QRectF>)), this, SLOT(on_sceneUpdated()) );
+    connect( chart()->scene(), &QGraphicsScene::changed, this, &PlotWidget::replot  );
+
+    _replot_timer.setInterval(1);
+    _replot_timer.setSingleShot(true);
+    QObject::connect(&_replot_timer, &QTimer::timeout, this, &PlotWidget::replotImpl);
 
 }
 
@@ -385,8 +389,8 @@ bool PlotWidget::xmlLoadState(QDomElement &plot_widget, QMessageBox::StandardBut
 
 QRectF PlotWidget::currentBoundingRect()
 {
-    return this->chart()->sceneBoundingRect();
-    //  return this->chart()->boundingRect();
+     //  return this->chart()->sceneBoundingRect();
+   return this->chart()->boundingRect();
 
     /* QRectF rect;
     rect.setBottom( this->canvasMap( yLeft ).s1() );
@@ -501,7 +505,7 @@ std::pair<float,float>  PlotWidget::maximumRangeY(bool current_canvas)
 
 
 
-void PlotWidget::replot()
+void PlotWidget::replotImpl()
 {
     // TODO if( _zoomer )
     // TODO      _zoomer->setZoomBase( false );
@@ -509,37 +513,23 @@ void PlotWidget::replot()
     /* if(_tracker ) {
         _tracker->refreshPosition( );
     }*/
-
     for(auto it = _curve_list.begin(); it != _curve_list.end(); ++it)
     {
         PlotDataPtr data = it->second.data;
         auto series = it->second.series;
-
         const int N = data->size();
-        const int M = series->count();
-        const int MIN = std::min( M,N);
 
-        for ( int i=0; i< MIN; i++)
+        QVector<QPointF> new_data;
+        new_data.resize( N );
+
+        for ( int i=0; i< N; i++)
         {
             auto point = data->at(i);
-            series->replace(i, point.x, point.y);
+            new_data[i] = QPointF( point.x, point.y);
         }
-
-        if( M > N )
-        {
-            series->remove( N, M-N );
-        }
-
-        if( M < N )
-        {
-            for (int i = M; i < N; i++)
-            {
-                auto point = data->at(i);
-                series->append( point.x, point.y);
-            }
-
-        }
+        series->replace( new_data );
     }
+
 
     if ( !_fps_timeStamp.isValid() )
     {
@@ -549,15 +539,15 @@ void PlotWidget::replot()
     else{
         _fps_counter++;
 
-        const double elapsed = _fps_timeStamp.elapsed() / 1000.0;
-        if ( elapsed >= 1 )
+        const int elapsed = _fps_timeStamp.elapsed() ;
+        if ( elapsed >= 1000 )
         {
 
-            QString fps( QString::number( qRound( _fps_counter / elapsed ) ) );
+            QString fps( QString::number( ( (1000 *_fps_counter) / elapsed ) ) );
             this->chart()->setTitle( fps );
 
             _fps_counter = 0;
-            _fps_timeStamp.start();
+            _fps_timeStamp.restart();
         }
     }
 }
@@ -633,9 +623,10 @@ void PlotWidget::on_externallyResized(QRectF rect)
     emit rectChanged( this, rect);
 }
 
-void PlotWidget::on_sceneUpdated()
+void PlotWidget::replot()
 {
-   // qDebug() << "on_sceneUpdated " << QTime::currentTime().toString();
+ //   qDebug() << "on_sceneUpdated " << QTime::currentTime().toString();
+    _replot_timer.start();
 }
 
 
@@ -651,7 +642,7 @@ void PlotWidget::zoomOut()
 
     rect.setBottom( rangeY.first );
     rect.setTop( rangeY.second );
-    this->setScale(rect);
+    this->setScale(rect, false);
 }
 
 void PlotWidget::on_zoomOutHorizontal_triggered()
@@ -735,8 +726,6 @@ bool PlotWidget::eventFilter(QObject *obj, QEvent *event)
 {
     static bool isPressed = true;
 
-    // qDebug() <<  event->type();
-
     if ( event->type() == QEvent::MouseButtonPress)
     {
         QMouseEvent *mouse_event = (QMouseEvent *)event;
@@ -772,30 +761,6 @@ bool PlotWidget::eventFilter(QObject *obj, QEvent *event)
             QPointF pointF = this->chart()->mapToValue( point );
 
             emit trackerMoved(pointF);
-        }
-    }
-
-    //------------------------------------------------------
-    if (event->type() == QEvent::Paint )
-    {
-        if ( !_fps_timeStamp.isValid() )
-        {
-            _fps_timeStamp.start();
-            _fps_counter = 0;
-        }
-        else{
-            _fps_counter++;
-
-            const double elapsed = _fps_timeStamp.elapsed() / 1000.0;
-            if ( elapsed >= 1 )
-            {
-
-                QString fps( QString::number( qRound( _fps_counter / elapsed ) ) );
-                this->chart()->setTitle( fps );
-
-                _fps_counter = 0;
-                _fps_timeStamp.start();
-            }
         }
     }
 
