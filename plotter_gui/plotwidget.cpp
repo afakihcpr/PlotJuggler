@@ -17,9 +17,6 @@
 #include <QtWidgets/QRubberBand>
 #include <QtCharts/QValueAxis>
 
-//#include <qwt_plot_opengl_canvas.h>
-//#include <qwt_plot_glcanvas.h>
-
 using namespace QtCharts;
 
 PlotWidget::PlotWidget(PlotDataMap *datamap, QWidget *parent):
@@ -70,6 +67,8 @@ PlotWidget::PlotWidget(PlotDataMap *datamap, QWidget *parent):
 
     // TODO   this->chart()->setMouseTracking(true);
     // TODO   this->chart()->installEventFilter(this);
+
+    connect( chart()->scene(), SIGNAL(changed(QList<QRectF>)), this, SLOT(on_sceneUpdated()) );
 
 }
 
@@ -511,7 +510,56 @@ void PlotWidget::replot()
         _tracker->refreshPosition( );
     }*/
 
-    // TODO  QChartView::replot();
+    for(auto it = _curve_list.begin(); it != _curve_list.end(); ++it)
+    {
+        PlotDataPtr data = it->second.data;
+        auto series = it->second.series;
+
+        const int N = data->size();
+        const int M = series->count();
+        const int MIN = std::min( M,N);
+
+        for ( int i=0; i< MIN; i++)
+        {
+            auto point = data->at(i);
+            series->replace(i, point.x, point.y);
+        }
+
+        if( M > N )
+        {
+            series->remove( N, M-N );
+        }
+
+        if( M < N )
+        {
+            for (int i = M; i < N; i++)
+            {
+                auto point = data->at(i);
+                series->append( point.x, point.y);
+            }
+
+        }
+    }
+
+    if ( !_fps_timeStamp.isValid() )
+    {
+        _fps_timeStamp.start();
+        _fps_counter = 0;
+    }
+    else{
+        _fps_counter++;
+
+        const double elapsed = _fps_timeStamp.elapsed() / 1000.0;
+        if ( elapsed >= 1 )
+        {
+
+            QString fps( QString::number( qRound( _fps_counter / elapsed ) ) );
+            this->chart()->setTitle( fps );
+
+            _fps_counter = 0;
+            _fps_timeStamp.start();
+        }
+    }
 }
 
 void PlotWidget::launchRemoveCurveDialog()
@@ -583,6 +631,11 @@ void PlotWidget::on_showPoints_triggered(bool checked)
 void PlotWidget::on_externallyResized(QRectF rect)
 {
     emit rectChanged( this, rect);
+}
+
+void PlotWidget::on_sceneUpdated()
+{
+   // qDebug() << "on_sceneUpdated " << QTime::currentTime().toString();
 }
 
 

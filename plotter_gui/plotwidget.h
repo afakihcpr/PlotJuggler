@@ -86,6 +86,7 @@ private slots:
     void on_showPoints_triggered(bool checked);
     void on_externallyResized(QRectF new_rect);
 
+    void on_sceneUpdated();
 
 private:
 

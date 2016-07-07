@@ -51,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
     createActions();
     loadPlugins("plugins");
 
-    buildData();
+ //   buildData();
     _undo_timer.start();
 
     // save initial state
@@ -1106,7 +1106,7 @@ void MainWindow::onReplotRequested()
     {
         _replot_timer->setSingleShot(true);
         _replot_timer->stop( );
-        _replot_timer->start( 40 );
+        _replot_timer->start( 1 );
     }
 }
 
