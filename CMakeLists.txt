@@ -1,14 +1,13 @@
 project(SuperPlotterCmake)
 cmake_minimum_required(VERSION 2.8)
 
-#SET(QT_USE_QTOPENGL TRUE)
 
 find_package(Qt5Core)
 find_package(Qt5Widgets)
 find_package(Qt5PrintSupport)
 find_package(Qt5Concurrent)
 find_package(Qt5Xml)
-#find_package(Qt5OpenGL)
+find_package(Qt5Charts)
 
 set(CMAKE_AUTOMOC ON)
 SET(CMAKE_AUTOUIC ON)
@@ -22,10 +21,10 @@ include_directories(
     ${Qt5Concurrent_INCLUDE_DIRS}
     ${Qt5PrintSupport_INCLUDE_DIRS}
     ${Qt5Xml_INCLUDE_DIRS}
-    #${Qt5OpenGl_INCLUDE_DIRS}
+    ${Qt5Charts_INCLUDE_DIRS}
     )
 
-include_directories( ./qwt/src ./common ./color_widgets/include ./plotter_gui)
+include_directories( ./common ./color_widgets/include ./plotter_gui)
 
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -34,7 +33,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 add_subdirectory( common)
 add_subdirectory( color_widgets )
-add_subdirectory( qwt/src )
 add_subdirectory( plotter_gui )
 
 add_subdirectory( plugins/DataLoadCSV )

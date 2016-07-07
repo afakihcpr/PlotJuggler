@@ -17,12 +17,12 @@ SET( PLOTTER_SRC
     plotwidget.cpp
     plotmatrix.cpp
     removecurvedialog.cpp
-    plotmagnifier.cpp
+ #   plotmagnifier.cpp
     busydialog.cpp
     busytaskdialog.cpp
-    customtracker.cpp
+  #  customtracker.cpp
     curvecolorpick.cpp
-    plotdata_qwt.cpp
+ #   plotdata_qwt.cpp
     filterablelistwidget.cpp
     tabbedplotwidget.cpp
     subwindow.cpp
@@ -40,8 +40,8 @@ target_link_libraries(SuperPlotter
     ${Qt5Xml_LIBRARIES}
     ${Qt5Concurrent_LIBRARIES}
     ${Qt5Core_QTMAIN_LIBRARIES}
+    ${Qt5Charts_LIBRARIES}
     colorwidgets
-    qwt_static
     )
 
 INSTALL(TARGETS SuperPlotter DESTINATION ${CMAKE_INSTALL_PREFIX}/bin )

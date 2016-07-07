@@ -2,7 +2,7 @@
 #define PLOTDATA_QWT_H
 
 #include <QColor>
-#include <qwt_series_data.h>
+
 #include "plotdata.h"
 
 

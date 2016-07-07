@@ -1,26 +1,19 @@
 #ifndef DragableWidget_H
 #define DragableWidget_H
 
+#include <memory>
 #include <map>
 #include <QObject>
 #include <QTextEdit>
-#include <qwt_plot.h>
-#include <qwt_plot_curve.h>
-#include <qwt_plot_grid.h>
-#include <qwt_symbol.h>
-#include <qwt_legend.h>
-#include "plotmagnifier.h"
-#include <qwt_plot_zoomer.h>
-#include <qwt_plot_panner.h>
 #include <QDomDocument>
-#include "plotdata_qwt.h"
-#include "customtracker.h"
-#include <qwt_plot_legenditem.h>
 #include <deque>
 #include <QMessageBox>
 #include <QTime>
+#include <QtCharts/QChartView>
+#include <QtCharts/QLineSeries>
+#include "plotdata.h"
 
-class PlotWidget : public QwtPlot
+class PlotWidget: public QtCharts::QChartView
 {
     Q_OBJECT
 
@@ -32,7 +25,7 @@ public:
 
     bool isEmpty();
 
-    const std::map<QString, std::shared_ptr<QwtPlotCurve> > &curveList();
+//    const std::map<QString, std::shared_ptr<QLineSeries> > &curveList();
 
     QDomElement xmlSaveState(QDomDocument &doc);
 
@@ -44,11 +37,17 @@ public:
 
     std::pair<float,float> maximumRangeY(bool current_canvas = false);
 
-    CurveTracker* tracker();
+//    CurveTracker* tracker();
 
     void setScale( QRectF rect, bool emit_signal = true );
 
     void activateLegent(bool activate);
+
+    typedef struct {
+        std::shared_ptr<QtCharts::QLineSeries> series;
+        PlotDataPtr data;
+
+    } PlotCurve;
 
 protected:
     virtual void dragEnterEvent(QDragEnterEvent *event) ;
@@ -89,7 +88,9 @@ private slots:
 
 
 private:
-    std::map<QString, std::shared_ptr<QwtPlotCurve> > _curve_list;
+
+
+    std::map<QString, PlotCurve > _curve_list;
 
     QAction *_action_removeCurve;
     QAction *_action_removeAllCurves;
@@ -99,12 +100,12 @@ private:
     QAction *_action_zoomOutVertically;
 
 
-    QwtPlotZoomer* _zoomer;
-    PlotMagnifier* _magnifier;
-    QwtPlotPanner* _panner;
+//    QwtPlotZoomer* _zoomer;
+ //   PlotMagnifier* _magnifier;
+ //   QwtPlotPanner* _panner;
     // QRectF _prev_bounding;
-    CurveTracker* _tracker;
-    QwtPlotLegendItem* _legend;
+ //   CurveTracker* _tracker;
+ //   QwtPlotLegendItem* _legend;
 
     void setAxisScale( int axisId, double min, double max, double step = 0 );
 

@@ -1,11 +1,7 @@
 #include <qlayout.h>
 #include <qpen.h>
-#include <qwt_plot.h>
-#include <qwt_plot_canvas.h>
-#include <qwt_scale_widget.h>
-#include <qwt_scale_draw.h>
 #include "plotmatrix.h"
-#include "customtracker.h"
+
 
 static int widget_uid = 0;
 
@@ -228,11 +224,11 @@ const PlotWidget* PlotMatrix::plotAt( int index ) const
 void PlotMatrix::setAxisScale( int axis, int row, int col,
                                double min, double max, double step )
 {
-    QwtPlot *plt = plotAt( row, col );
+    PlotWidget *plt = plotAt( row, col );
     if ( plt )
     {
-        plt->setAxisScale( axis, min, max, step );
-        plt->updateAxes();
+  //      plt->setAxisScale( axis, min, max, step );
+  //      plt->updateAxes();
     }
 }
 
@@ -303,7 +299,7 @@ bool PlotMatrix::xmlLoadState( QDomElement &plotmatrix )
 
 void PlotMatrix::updateLayout()
 {
-    for ( int row = 0; row < rowsCount(); row++ )
+/*    for ( int row = 0; row < rowsCount(); row++ )
     {
         alignAxes( row, QwtPlot::xBottom );
         alignScaleBorder( row, QwtPlot::yLeft );
@@ -313,7 +309,7 @@ void PlotMatrix::updateLayout()
     {
         alignAxes( col, QwtPlot::yLeft );
         alignScaleBorder( col, QwtPlot::xBottom );
-    }
+    }*/
 }
 
 void PlotMatrix::replot()
@@ -410,7 +406,7 @@ void PlotMatrix::on_singlePlotScaleChanged(PlotWidget *modified_plot, QRectF new
 
 void PlotMatrix::alignAxes( int rowOrColumn, int axis )
 {
-    if ( axis == QwtPlot::yLeft || axis == QwtPlot::yRight )
+/*    if ( axis == QwtPlot::yLeft || axis == QwtPlot::yRight )
     {
         double maxExtent = 0;
 
@@ -490,5 +486,5 @@ void PlotMatrix::alignScaleBorder( int rowOrColumn, int axis )
             if ( p )
                 p->axisWidget( axis )->setMinBorderDist( 15, 15 );
         }
-    }
+    }*/
 }

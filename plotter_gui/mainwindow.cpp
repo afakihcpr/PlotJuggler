@@ -6,7 +6,6 @@
 #include <QMenu>
 #include <QStringListModel>
 #include <stdio.h>
-#include <qwt_plot_canvas.h>
 #include <QDomDocument>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -15,7 +14,7 @@
 #include <QPluginLoader>
 #include <QSettings>
 #include <QWindow>
-
+#include <QTimer>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "busydialog.h"
@@ -52,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
     createActions();
     loadPlugins("plugins");
 
-    //buildData();
+    buildData();
     _undo_timer.start();
 
     // save initial state
@@ -402,13 +401,13 @@ void MainWindow::onPlotAdded(PlotWidget* plot)
 
     connect( this, SIGNAL(requestRemoveCurveByName(const QString&)), plot, SLOT(removeCurve(const QString&))) ;
 
-    connect( this, SIGNAL(trackerTimeUpdated(QPointF)), plot->tracker(), SLOT(setPosition(QPointF)));
+   //TODO connect( this, SIGNAL(trackerTimeUpdated(QPointF)), plot->tracker(), SLOT(setPosition(QPointF)));
     connect( this, SIGNAL(trackerTimeUpdated(QPointF)), plot, SLOT( replot() ));
 
-    connect( this, SIGNAL(activateTracker(bool)),  plot->tracker(), SLOT(setEnabled(bool)) );
+  //TODO  connect( this, SIGNAL(activateTracker(bool)),  plot->tracker(), SLOT(setEnabled(bool)) );
     connect( this, SIGNAL(activateTracker(bool)),  plot, SLOT( replot() ));
 
-    plot->tracker()->setEnabled(  ui->pushButtonActivateTracker->isChecked() );
+  //TODO  plot->tracker()->setEnabled(  ui->pushButtonActivateTracker->isChecked() );
 
 }
 
